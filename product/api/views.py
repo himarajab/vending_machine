@@ -1,24 +1,26 @@
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import permissions
-from .serializers import DetailProductSerializer
+from .serializers import DetailProductSerializer,ProductSerializer
+from ..models import Product
 
-
-
+class ProductCreate(generics.CreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = (permissions.IsAuthenticated, )
 
 class ListProductView(generics.ListAPIView):  
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     serializer_class = DetailProductSerializer
 
     def get_queryset(self): 
-        customer = self.request.user
-        response = User.objects.all().order_by("-id")
+        response = Product.objects.all().order_by("-id")
         return response 
 
 class DetailProductView(generics.RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = DetailProductSerializer
-    http_method_names = ['get','patch']
+    http_method_names = ['patch']
 
     def get_queryset(self, *args, **kwargs):
         qs = Product.objects.filter(id=self.kwargs["pk"])
