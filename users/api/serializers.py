@@ -17,3 +17,14 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+class DetailUserSerializer(serializers.ModelSerializer):
+    username = serializers.ReadOnlyField(required=False)
+    class Meta:
+        model = User
+        fields = [
+            "id",
+            "username",
+            "role",
+            "role",
+            "deposit",
+        ]
