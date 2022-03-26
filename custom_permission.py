@@ -12,7 +12,10 @@ class IsOwner(permissions.BasePermission):
 class IsProductOwner(permissions.BasePermission):
     def has_permission(self, request, view):
       user_id = request.user.id
-      request_user_id  =int(request.parser_context['kwargs']['pk'])
-      product = Product.objects.get(id=request_user_id)
-      seller_id = product.seller.id
-      return user_id == seller_id
+      product_id  =int(request.parser_context['kwargs']['pk'])
+      product_object = Product.objects.filter(seller_id=user_id,id=product_id)
+      if product_object.exists():
+        seller_id = product_object.values('seller_id').first()['seller_id']
+        return user_id == seller_id
+      else:
+        return False
