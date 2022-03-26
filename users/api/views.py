@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import viewsets
 from rest_framework import generics
 from rest_framework import permissions
-from .serializers import UserSerializer,DetailUserSerializer,BuySerializer
+from .serializers import UserSerializer,DetailUserSerializer,BuySerializer,DepositUserSerializer
 import custom_permission
 
 User=get_user_model()
@@ -60,8 +60,8 @@ class Reset(views.APIView):
         return Response(base_response)
 
 class Deposit(generics.CreateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = DetailUserSerializer
+    permission_classes = [custom_permission.IsBuyer]
+    serializer_class = DepositUserSerializer
     
     
     def create(self,request, *args, **kwargs):

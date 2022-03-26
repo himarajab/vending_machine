@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from product.models import Product
 
 User=get_user_model()
+
 DEPOSIT_VALUES = (
         (5, 5),
         (10, 10),
@@ -75,4 +76,19 @@ class DetailUserSerializer(serializers.ModelSerializer):
             "username",
             "role",
             "email",
+        ]
+        
+        
+class DepositUserSerializer(serializers.ModelSerializer):
+    pk = serializers.ReadOnlyField(required=False)
+    username = serializers.ReadOnlyField(required=False)
+    role = serializers.ReadOnlyField(required=False)
+    
+    class Meta:
+        model = User
+        fields = [
+            "pk",
+            "username",
+            "role",
+            "deposit",
         ]

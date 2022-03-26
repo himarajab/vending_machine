@@ -19,3 +19,10 @@ class IsProductOwner(permissions.BasePermission):
         return user_id == seller_id
       else:
         return False
+
+class IsBuyer(permissions.BasePermission):
+    def has_permission(self, request, view):
+      user_id = request.user.id
+      user_role = User.objects.filter(id=user_id).values('role').first()['role']
+      
+      return user_role == 'buyer'
