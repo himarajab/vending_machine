@@ -14,5 +14,5 @@ urlpatterns = [
     
     path('deposit/', views.Deposit.as_view()),
     path('reset/', views.Reset.as_view()),
-    
+    path('buy/<int:product_id>/<int:quantity>/',views.Buy.as_view()),
 ]

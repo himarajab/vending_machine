@@ -1,3 +1,4 @@
+from product.models import Product
 from rest_framework import status
 from django.db.models import F
 from rest_framework import views
@@ -6,10 +7,38 @@ from django.contrib.auth import get_user_model
 from rest_framework import viewsets
 from rest_framework import generics
 from rest_framework import permissions
-from .serializers import UserSerializer,DetailUserSerializer
+from .serializers import UserSerializer,DetailUserSerializer,BuySerializer
 
 User=get_user_model()
 
+class Buy(generics.CreateAPIView):   
+    serializer_class = BuySerializer        
+    permission_classes = (permissions.IsAuthenticated,)
+    
+    def get_queryset(self):
+        order = Product.objects.get(id=self.kwargs["product_id"])
+        return order
+    def create(self, request,product_id, quantity):
+        base_request = request.data
+        customer_id = self.request.user.id
+        serializer = self.get_serializer(data=base_request)
+        product_id = self.kwargs['product_id']
+        if serializer.is_valid():
+            order_total = item.quantity * item.selling_price
+            qs = Product.objects.filter(id=product_id).values("amount_available",
+            "cost",
+            "name",
+            "seller",).last()
+            qs['total'] =order_total
+            response = Response(qs, status=status.HTTP_201_CREATED)
+        else:
+            response= Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return response
+
+
+
+    
+    
 class Reset(views.View):
     permission_classes = [permissions.IsAuthenticated]
     
