@@ -21,7 +21,7 @@ class Buy(generics.CreateAPIView):
         return product
     def create(self, request,product_id, quantity):
         base_request = request.data
-        customer_id = self.request.user.id
+        user_id = self.request.user.id
         serializer = self.get_serializer(data=base_request)
         product_id = self.kwargs['product_id']
         if serializer.is_valid():
@@ -29,6 +29,13 @@ class Buy(generics.CreateAPIView):
                 'id','cost','amount_available','name'
                 ).first()
             order_total = quantity * product['cost']
+           
+            user_obj=User.objects.filter(id=user_id)
+            deposit=float(user_obj.values().first()['deposit']) - float(order_total)
+            pprint(deposit)
+            pprint('deposit')
+            user_obj.update(deposit=deposit)
+            
             product['order_total'] = order_total
             response = Response(product, status=status.HTTP_201_CREATED)
         else:
