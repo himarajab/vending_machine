@@ -3,6 +3,13 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 
 User=get_user_model()
+DEPOSIT_VALUES = (
+        ('5', 5),
+        ('10', 10),
+        ('20', 20),
+        ('50', 50),
+        ('100', 100),
+    )
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,13 +25,15 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 class DetailUserSerializer(serializers.ModelSerializer):
+    pk = serializers.ReadOnlyField(required=False)
     username = serializers.ReadOnlyField(required=False)
+    role = serializers.ReadOnlyField(required=False)
+    deposit = serializers.ChoiceField(choices=DEPOSIT_VALUES)
     class Meta:
         model = User
         fields = [
-            "id",
+            "pk",
             "username",
-            "role",
             "role",
             "deposit",
         ]
