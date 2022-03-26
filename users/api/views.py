@@ -9,6 +9,7 @@ from rest_framework import viewsets
 from rest_framework import generics
 from rest_framework import permissions
 from .serializers import UserSerializer,DetailUserSerializer,BuySerializer
+import custom_permission
 
 User=get_user_model()
 
@@ -107,7 +108,7 @@ class DetailUserView(generics.RetrieveUpdateAPIView):
     
     
 class DestoryUserView(generics.DestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [custom_permission.IsOwner]
     serializer_class = DetailUserSerializer
 
     def delete(self, request, *args, **kwargs):

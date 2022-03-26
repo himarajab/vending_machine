@@ -30,12 +30,14 @@ class BuySerializer(serializers.ModelSerializer):
         if product_obj: 
             product_amount_available =product_obj.first().amount_available
 
-        if quantity > product_amount_available:
-            message = {str(product_id): 'Not available  quantity'}
-            raise serializers.ValidationError({"error": message })
+            if quantity > product_amount_available:
+                message = {str(product_id): 'Not available  quantity'}
+                raise serializers.ValidationError({"error": message })
+            else:
+                product_obj.update(amount_available=F('amount_available') -quantity)
         else:
-            product_obj.update(amount_available=F('amount_available') -quantity)
-
+                message = {str(product_id): 'Not found'}
+                raise serializers.ValidationError({"error": message })
         return attrs
         
 
@@ -52,7 +54,7 @@ class BuySerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'password','role')
+        fields = ('username', 'password','role','deposit')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -72,5 +74,5 @@ class DetailUserSerializer(serializers.ModelSerializer):
             "pk",
             "username",
             "role",
-            "deposit",
+            "email",
         ]
