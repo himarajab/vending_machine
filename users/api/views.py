@@ -46,11 +46,11 @@ class Buy(generics.CreateAPIView):
 
     
     
-class Reset(views.View):
+class Reset(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
     
     
-    def create(self,request, *args, **kwargs):
+    def post(self,request, *args, **kwargs):
         user=self.request.user
         user_obj=User.objects.filter(pk=user.id)
         user_obj.update(deposit=0)
