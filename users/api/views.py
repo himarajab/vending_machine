@@ -1,3 +1,4 @@
+from pprint import pprint
 from product.models import Product
 from rest_framework import status
 from django.db.models import F
@@ -16,21 +17,20 @@ class Buy(generics.CreateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     
     def get_queryset(self):
-        order = Product.objects.get(id=self.kwargs["product_id"])
-        return order
+        product = Product.objects.filter(id=self.kwargs["product_id"])
+        return product
     def create(self, request,product_id, quantity):
         base_request = request.data
         customer_id = self.request.user.id
         serializer = self.get_serializer(data=base_request)
         product_id = self.kwargs['product_id']
         if serializer.is_valid():
-            order_total = item.quantity * item.selling_price
-            qs = Product.objects.filter(id=product_id).values("amount_available",
-            "cost",
-            "name",
-            "seller",).last()
-            qs['total'] =order_total
-            response = Response(qs, status=status.HTTP_201_CREATED)
+            product = self.get_queryset().values(
+                'id','cost','amount_available','name'
+                ).first()
+            order_total = quantity * product['cost']
+            product['order_total'] = order_total
+            response = Response(product, status=status.HTTP_201_CREATED)
         else:
             response= Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return response

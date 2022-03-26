@@ -1,3 +1,4 @@
+from django.db.models import F
 from pprint import pprint
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
@@ -22,21 +23,18 @@ class BuySerializer(serializers.ModelSerializer):
     seller = serializers.ReadOnlyField(required=False)
     
     def validate(self, attrs):
-        pprint(vars(self))
-        product = attrs['product_id']
-        quantity = attrs['quantity']
+        product_id = self.context['request'].parser_context['kwargs']['product_id']
+        quantity = self.context['request'].parser_context['kwargs']['quantity']
   
-        product_obj=Product.objects.filter(id=product.pk)
+        product_obj=Product.objects.filter(id=product_id)
         if product_obj: 
-            product_availablequantity =product_obj.first().availablequantity
-        else:
-            raise serializers.ValidationError({"error": 'product not available now .. '})
+            product_amount_available =product_obj.first().amount_available
 
-        if quantity > product_availablequantity:
-            message = {str(product): 'Not available  quantity'}
-            error_items.update(message)
+        if quantity > product_amount_available:
+            message = {str(product_id): 'Not available  quantity'}
+            raise serializers.ValidationError({"error": message })
         else:
-            product_obj.update(availablequantity=F('availablequantity') -requested_quantity)
+            product_obj.update(amount_available=F('amount_available') -quantity)
 
         return attrs
         
