@@ -83,7 +83,7 @@ class DepositUserSerializer(serializers.ModelSerializer):
     pk = serializers.ReadOnlyField(required=False)
     username = serializers.ReadOnlyField(required=False)
     role = serializers.ReadOnlyField(required=False)
-    
+    deposit = serializers.ChoiceField(choices=DEPOSIT_VALUES)
     class Meta:
         model = User
         fields = [
