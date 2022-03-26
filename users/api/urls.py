@@ -13,5 +13,6 @@ urlpatterns = [
     path("users/delete/<slug:pk>/", views.DestoryUserView.as_view(), name="delete_user"),
     
     path('deposit/', views.Deposit.as_view()),
+    path('reset/', views.Reset.as_view()),
     
 ]

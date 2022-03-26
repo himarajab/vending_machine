@@ -10,6 +10,18 @@ from .serializers import UserSerializer,DetailUserSerializer
 
 User=get_user_model()
 
+class Reset(views.View):
+    permission_classes = [permissions.IsAuthenticated]
+    
+    
+    def create(self,request, *args, **kwargs):
+        user=self.request.user
+        user_obj=User.objects.filter(pk=user.id)
+        user_obj.update(deposit=0)
+        base_response = user_obj=User.objects.filter(pk=user.id).values('id','deposit','role').first()
+
+        return Response(base_response)
+
 class Deposit(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = DetailUserSerializer
