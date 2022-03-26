@@ -1,9 +1,10 @@
+
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework import permissions
 from .serializers import DetailProductSerializer,ProductSerializer
 from ..models import Product
-
+import custom_permission
 class ProductCreate(generics.CreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -18,9 +19,9 @@ class ListProductView(generics.ListAPIView):
         return response 
 
 class DetailProductView(generics.RetrieveUpdateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [custom_permission.IsProductOwner]
     serializer_class = DetailProductSerializer
-    http_method_names = ['patch']
+    http_method_names = ['patch','get']
 
     def get_queryset(self, *args, **kwargs):
         qs = Product.objects.filter(id=self.kwargs["pk"])
@@ -32,7 +33,7 @@ class DetailProductView(generics.RetrieveUpdateAPIView):
     
     
 class DestoryProductView(generics.DestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [custom_permission.IsProductOwner]
     serializer_class = DetailProductSerializer
 
     def delete(self, request, *args, **kwargs):
