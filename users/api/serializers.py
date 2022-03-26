@@ -54,7 +54,7 @@ class BuySerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'password','role','deposit')
+        fields = ('id','username', 'password','role','deposit')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):

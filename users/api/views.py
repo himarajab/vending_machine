@@ -93,7 +93,7 @@ class ListUserView(generics.ListAPIView):
         return response 
 
 class DetailUserView(generics.RetrieveUpdateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [custom_permission.IsOwner]
     serializer_class = DetailUserSerializer
     # disable using of the put request as it by default will enforce update all fields 
     http_method_names = ['get','patch']
