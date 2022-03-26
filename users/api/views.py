@@ -15,7 +15,7 @@ User=get_user_model()
 
 class Buy(generics.CreateAPIView):   
     serializer_class = BuySerializer        
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (custom_permission.IsBuyer)
     
     def get_queryset(self):
         product = Product.objects.filter(id=self.kwargs["product_id"])
@@ -48,7 +48,7 @@ class Buy(generics.CreateAPIView):
     
     
 class Reset(views.APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [custom_permission.IsBuyer]
     
     
     def post(self,request, *args, **kwargs):
