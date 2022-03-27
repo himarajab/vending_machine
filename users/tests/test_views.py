@@ -47,10 +47,17 @@ def test_user_update(client,f_user):
     assert response.data['username'] == 'hima'
     assert response.status_code == 200
 
-def test_user_update(client,f_user):
+def test_user_patch(client,f_user):
     url = reverse('users-api:user-update',args=[f_user.id])
     data = {'email': 's@s.com'}
     client.force_login(f_user)
-    response = client.patch(url,data=data)
-    pprint(vars(response))
+    response = client.patch(url,data=data,content_type='application/json')
+    assert response.data['email'] == 's@s.com'
     assert response.status_code == 200
+
+def test_different_user_patch(client,f_user):
+    url = reverse('users-api:user-update',args=[2])
+    data = {'email': 's@s.com'}
+    client.force_login(f_user)
+    response = client.patch(url,data=data,content_type='application/json')
+    assert response.status_code == 403
