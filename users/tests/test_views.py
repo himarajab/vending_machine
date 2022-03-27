@@ -15,6 +15,8 @@ def test_right_user_register(client,f_user):
 
 def test_wrong_user_register(client,f_user):
     url = reverse('users-api:register')
+    # wrong password field
     data = {'username': 'hello','email': 't@t.com','password1': 'password1','role': 'buyer','deposit': '0'}
     response = client.post(url,data=data)
     assert response.status_code == 400
+
