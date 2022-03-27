@@ -15,7 +15,7 @@ User=get_user_model()
 
 class Buy(generics.CreateAPIView):   
     serializer_class = BuySerializer        
-    permission_classes = (custom_permission.IsBuyer)
+    permission_classes = [custom_permission.IsBuyer]
     
     def get_queryset(self):
         product = Product.objects.filter(id=self.kwargs["product_id"])
@@ -32,11 +32,12 @@ class Buy(generics.CreateAPIView):
             order_total = quantity * product['cost']
            
             user_obj=User.objects.filter(id=user_id)
-            deposit=float(user_obj.values().first()['deposit']) - float(order_total)
-            pprint(deposit)
-            pprint('deposit')
+            base_deposit=float(user_obj.values().first()['deposit'])
+            deposit=base_deposit - float(order_total)
+            change =  float(base_deposit) -float(order_total)
+            if change in [5, 10, 20, 50 , 100]:
+                product['change'] = change
             user_obj.update(deposit=deposit)
-            
             product['order_total'] = order_total
             response = Response(product, status=status.HTTP_201_CREATED)
         else:

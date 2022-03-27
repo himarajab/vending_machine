@@ -26,11 +26,16 @@ class BuySerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         product_id = self.context['request'].parser_context['kwargs']['product_id']
         quantity = self.context['request'].parser_context['kwargs']['quantity']
-  
+        user_id = self.context['request'].user.id
+        user_obj=User.objects.filter(id=user_id)
         product_obj=Product.objects.filter(id=product_id)
         if product_obj: 
             product_amount_available =product_obj.first().amount_available
-
+            order_total = quantity * product_obj.first().cost
+            base_deposit=float(user_obj.values().first()['deposit'])
+            if order_total > base_deposit:
+                message = {'error': 'Not enough money in your account'}
+                raise serializers.ValidationError({"error": message })
             if quantity > product_amount_available:
                 message = {str(product_id): 'Not available  quantity'}
                 raise serializers.ValidationError({"error": message })
