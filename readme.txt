@@ -9,7 +9,9 @@ Setup
   
 5- Install dependencies:
   - pip install -r requirements.txt
-6- Run the application:
+6- run tests:
+  - pytest
+7- Run the application:
   python manage.py makemigrations
   python manage.py migrate
   python manage.py runserver
