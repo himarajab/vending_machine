@@ -55,9 +55,30 @@ def test_user_patch(client,f_user):
     assert response.data['email'] == 's@s.com'
     assert response.status_code == 200
 
-def test_different_user_patch(client,f_user):
+def test_different_user_update(client,f_user):
     url = reverse('users-api:user-update',args=[2])
     data = {'email': 's@s.com'}
     client.force_login(f_user)
     response = client.patch(url,data=data,content_type='application/json')
     assert response.status_code == 403
+    
+def test_deposit(client,f_user):
+    url = reverse('users-api:deposit')
+    deposit_new_value =10 
+    final_deposit = f_user.deposit+ deposit_new_value
+    data = {'deposit':deposit_new_value }
+    client.force_login(f_user)
+    response = client.post(url,data=data)
+    assert response.status_code == 200
+    assert response.data['deposit'] == final_deposit
+    
+
+def test_buy(client,f_user,f_product):
+    quantity =2
+    url = reverse('users-api:buy',args=[f_product.id,quantity])
+    data = {'': ''}
+    client.force_login(f_user)
+    response = client.post(url,data=data)
+    order_total = f_product.cost*quantity
+    assert response.status_code == 201
+    assert response.data['order_total'] == order_total
